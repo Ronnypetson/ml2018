@@ -20,7 +20,7 @@ clarities = {'"SI1"':2,'"VS2"':3,'"SI2"':1,'"VS1"':4,'"VVS2"':5,'"VVS1"':6,'"I1"
 #		dic[x] = new_x
 
 # Loading the table
-diamonds_table = np.genfromtxt('diamonds.csv',dtype=None,delimiter=',',skip_header=1,usecols=range(1,11))
+diamonds_table = np.genfromtxt('diamonds-dataset/diamonds-train.csv',dtype=None,delimiter=',',skip_header=1,usecols=range(1,11))
 diamonds_table = [ list(t) for t in diamonds_table ]
 
 # Replacing strings by one-hot encoding
