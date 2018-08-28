@@ -1,5 +1,7 @@
 import numpy as np
 import pandas as pd
+from sklearn import preprocessing
+from sklearn import linear_model
 
 # Attributes of the "diamonds" table in the original order
 # "","carat","cut","color","clarity","depth","table","price","x","y","z"
@@ -29,12 +31,27 @@ for x in diamonds_table:
 
 #diamonds_table = [ [x[0]]+x[1]+x[2]+x[3]+x[4:] for x in diamonds_table]
 
-for x in diamonds_table:
-	print(x)
+#for x in diamonds_table:
+#	print(x)
 
+# Create data frame
 new_columns = ["carat","cut","color","clarity","depth","table","price","x","y","z"]
 diamonds_df = pd.DataFrame(diamonds_table,columns=new_columns)
 
-for column in diamonds_df:
-	print(column+": %f"%diamonds_df[column].corr(diamonds_df["price"]))
+# Normalize columns
+diamonds_array = diamonds_df.values
+diamonds_scaled = preprocessing.MinMaxScaler().fit_transform(diamonds_array)
+diamonds_df = pd.DataFrame(diamonds_scaled,columns=new_columns)
+
+# ["carat","cut","color","clarity","depth","table","x","y","z"]
+# Train Sklearn
+diamonds_X = diamonds_df[["carat","cut","color","clarity","x","y","z"]].values
+diamonds_Y = diamonds_df["price"].values
+
+sk_regressor = linear_model.SGDRegressor()
+sk_regressor.fit(diamonds_X,diamonds_Y)
+print(sk_regressor.score(diamonds_X,diamonds_Y))
+
+#for column in diamonds_df:
+#	print(column+": %f"%diamonds_df[column].corr(diamonds_df["price"]))
 
