@@ -36,7 +36,7 @@ def getXY(fl_path='diamonds-dataset/diamonds-train.csv'):
 	#	print(x)
 
 	# Create data frame
-	new_columns = ["carat","cut","color","clarity","depth","table","price","x","y","z"]
+	new_columns = ["carat","cut","color","clarity","x","y","z","depth","table","price"]
 	diamonds_df = pd.DataFrame(diamonds_table,columns=new_columns)
 
 	# Normalize columns
@@ -46,7 +46,7 @@ def getXY(fl_path='diamonds-dataset/diamonds-train.csv'):
 
 	# ["carat","cut","color","clarity","depth","table","x","y","z"]
 	# Train Sklearn
-	diamonds_X = diamonds_df[["carat","cut","color","clarity","depth","table","x","y","z"]].values
+	diamonds_X = diamonds_df[["carat","cut","color","clarity","x","y","z","depth","table"]].values
 	diamonds_Y = diamonds_df["price"].values
 
 	return diamonds_X, diamonds_Y
