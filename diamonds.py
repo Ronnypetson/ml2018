@@ -1,7 +1,9 @@
 import numpy as np
+import pandas as pd
 
 # Attributes of the "diamonds" table in the original order
 # "","carat","cut","color","clarity","depth","table","price","x","y","z"
+#       0     1-5    6-12   13-20      21      22      23    24  25  26
 
 # Dictionaries with the categorical values
 cuts = {'"Ideal"':0,'"Premium"':1,'"Good"':2,'"Very Good"':3,'"Fair"':4}
@@ -25,8 +27,15 @@ for x in diamonds_table:
 	x[2] = colors[x[2]]
 	x[3] = clarities[x[3]]
 
-diamonds_table = [ [x[0]]+x[1]+x[2]+x[3]+x[4:-1] for x in diamonds_table]
+diamonds_table = [ [x[0]]+x[1]+x[2]+x[3]+x[4:] for x in diamonds_table]
 
-for x in diamonds_table:
-	print(x)
+#for x in diamonds_table:
+#	print(x)
+
+new_columns = ["carat","cut0","cut1","cut2","cut3","cut4",\
+											 "color0","color1","color2","color3","color4","color5","color6",\
+											 "clarity0","clarity1","clarity2","clarity3","clarity4","clarity5","clarity6","clarity7",\
+											 "depth","table","price","x","y","z"]
+diamonds_df = pd.DataFrame(diamonds_table,columns=new_columns)
+print(diamonds_df["carat"].corr(diamonds_df["price"]))
 
