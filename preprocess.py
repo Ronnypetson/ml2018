@@ -12,11 +12,11 @@ colors = {'G':3,'E':5,'I':1,'J':0,'H':2,'F':4,'D':6}
 clarities = {'SI1':2,'VS2':3,'SI2':1,'VS1':4,'VVS2':5,'VVS1':6,'I1':0,'IF':7}
 
 # Converting dummy encoding to one-hot encoding for the dictionaries
-#for dic in [cuts,colors,clarities]:
-#	for x in dic:
-#		new_x = [0.0]*len(dic)
-#		new_x[dic[x]] = 1.0
-#		dic[x] = new_x
+for dic in [cuts,colors,clarities]:
+	for x in dic:
+		new_x = [0.0]*len(dic)
+		new_x[dic[x]] = 1.0
+		dic[x] = new_x
 
 # Le o arquivo e retorna os dados divididos em X e Y
 def getXY(fl_path='diamonds-dataset/diamonds-train.csv'):
@@ -30,13 +30,17 @@ def getXY(fl_path='diamonds-dataset/diamonds-train.csv'):
 		x[2] = colors[x[2]]
 		x[3] = clarities[x[3]]
 
-	#diamonds_table = [ [x[0]]+x[1]+x[2]+x[3]+x[4:] for x in diamonds_table]
+	diamonds_table = [ [x[0]]+x[1]+x[2]+x[3]+x[4:] for x in diamonds_table] # One-hot mode
 
 	#for x in diamonds_table:
 	#	print(x)
 
 	# Create data frame
-	new_columns = ["carat","cut","color","clarity","x","y","z","depth","table","price"]
+	#new_columns = ["carat","cut","color","clarity","x","y","z","depth","table","price"]
+	new_columns = ["carat","cut0","cut1","cut2","cut3","cut4",\
+											 "color0","color1","color2","color3","color4","color5","color6",\
+											 "clarity0","clarity1","clarity2","clarity3","clarity4","clarity5","clarity6","clarity7",\
+											 "x","y","z","depth","table","price"] # One-hot mode
 	diamonds_df = pd.DataFrame(diamonds_table,columns=new_columns)
 
 	# Normalize columns
@@ -44,10 +48,15 @@ def getXY(fl_path='diamonds-dataset/diamonds-train.csv'):
 	diamonds_scaled = preprocessing.MinMaxScaler().fit_transform(diamonds_array)
 	diamonds_df = pd.DataFrame(diamonds_scaled,columns=new_columns)
 
-	# ["carat","cut","color","clarity","depth","table","x","y","z"]
+	# ["carat","cut","color","clarity","x","y","z","depth","table"]
 	# Train Sklearn
-	diamonds_X = diamonds_df[["carat","cut","color","clarity","x","y","z","depth","table"]].values
+	#diamonds_X = diamonds_df[["carat","cut","color","clarity","x","y","z"]].values
+	diamonds_X = diamonds_df[new_columns[:-3]].values # One-hot mode
 	diamonds_Y = diamonds_df["price"].values
+
+	# Nova feature: e^(1.58*carat)
+	for x in diamonds_X:
+		x[0] = np.exp(1.58*x[0])
 
 	return diamonds_X, diamonds_Y
 
