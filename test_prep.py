@@ -15,6 +15,7 @@ test_X, test_Y = getXY('diamonds-dataset/diamonds-test.csv')
 mod_l = modelo_linear()
 mse = mod_l.fit(train_X,train_Y)
 
+print(mse)
 plt.plot(mse)
 plt.show()
 

@@ -2,7 +2,7 @@ import numpy as np
 
 class modelo_linear:
 	# Initializer
-	def __init__(self,learning_rate=0.01,train_iter=2000,mini_batch_len=100):
+	def __init__(self,learning_rate=0.0003,train_iter=320000,mini_batch_len=100):
 		self.learning_rate = learning_rate
 		self.train_iter = train_iter
 		self.mini_batch_len = mini_batch_len
@@ -25,10 +25,10 @@ class modelo_linear:
 				grad += (np.dot(x,self.theta)-y)*x
 				mean_losses[i] += (np.dot(x,self.theta)-y)**2
 			grad *= self.learning_rate/self.mini_batch_len
-			mean_losses /= self.mini_batch_len
+			mean_losses[i] /= self.mini_batch_len
 			# Update parameters
 			self.theta -= grad
-			return mean_losses
+		return mean_losses
 
 	# Estimate Y from X
 	def predict(self,X_test):
