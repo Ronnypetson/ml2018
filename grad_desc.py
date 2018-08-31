@@ -2,7 +2,7 @@ import numpy as np
 
 class modelo_linear:
 	# Initializer
-	def __init__(self,learning_rate=0.0003,train_iter=320000,mini_batch_len=100):
+	def __init__(self,learning_rate=0.001,train_iter=32000,mini_batch_len=100):
 		self.learning_rate = learning_rate
 		self.train_iter = train_iter
 		self.mini_batch_len = mini_batch_len
@@ -10,7 +10,7 @@ class modelo_linear:
 	# Fit parameters theta by mini-batch gradient descent
 	def fit(self,X_train,Y_train):
 		# Create column with 1
-		X_train = np.insert(X_train,0,1,1)
+		#X_train = np.insert(X_train,0,1,1)
 		# Initialize parameters with small random values
 		self.theta = np.random.normal(0.0,1.0,size=X_train[0].shape)
 		mean_losses = np.zeros(self.train_iter)
@@ -32,7 +32,7 @@ class modelo_linear:
 
 	# Estimate Y from X
 	def predict(self,X_test):
-		X_test = np.insert(X_test,0,1,1)
+		#X_test = np.insert(X_test,0,1,1)
 		return np.dot(X_test,self.theta)
 
 	# Compute mean squared loss

@@ -42,6 +42,7 @@ def getXY(fl_path='diamonds-dataset/diamonds-train.csv'):
 											 "clarity0","clarity1","clarity2","clarity3","clarity4","clarity5","clarity6","clarity7",\
 											 "x","y","z","depth","table","price"] # One-hot mode
 	diamonds_df = pd.DataFrame(diamonds_table,columns=new_columns)
+	#diamonds_df["bias"] = 1.0
 	#diamonds_df["volume"] = diamonds_df["x"]*diamonds_df["y"]*diamonds_df["z"]
 	#diamonds_df["volume_2"] = diamonds_df["volume"]**2
 	#diamonds_df["volume_3"] = diamonds_df["volume"]**3
@@ -53,7 +54,8 @@ def getXY(fl_path='diamonds-dataset/diamonds-train.csv'):
 
 	# Normalize columns
 	diamonds_array = diamonds_df.values
-	diamonds_scaled = preprocessing.MinMaxScaler().fit_transform(diamonds_array)
+	diamonds_scaled = preprocessing.StandardScaler().fit_transform(diamonds_array)
+	#diamonds_scaled = preprocessing.MinMaxScaler().fit_transform(diamonds_array) # tirar min e max
 	diamonds_df = pd.DataFrame(diamonds_scaled,columns=list(diamonds_df))
 
 	# ["carat","cut","color","clarity","x","y","z","depth","table"]
@@ -63,8 +65,8 @@ def getXY(fl_path='diamonds-dataset/diamonds-train.csv'):
 	diamonds_Y = diamonds_df["price"].values
 
 	# Nova feature: e^(1.58*carat)
-	for x in diamonds_X:
-		x[0] = np.exp(1.58*x[0])
+	#for x in diamonds_X:
+	#	x[0] = np.exp(1.58*x[0])
 
 	return diamonds_X, diamonds_Y
 
