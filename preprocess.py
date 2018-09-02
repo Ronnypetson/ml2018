@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 from sklearn import preprocessing
-#from sklearn import linear_model
 
 # Attributes of the "diamonds" table in the original order
 # carat,cut,color,clarity,x,y,z,depth,table,price
@@ -32,50 +31,33 @@ def getXY(fl_path='diamonds-dataset/diamonds-train.csv'):
 
 	diamonds_table = [ [x[0]]+x[1]+x[2]+x[3]+x[4:] for x in diamonds_table] # One-hot mode
 
-	#for x in diamonds_table:
-	#	print(x)
-
 	# Create data frame
-	#new_columns = ["carat","cut","color","clarity","x","y","z","depth","table","price"]
 	new_columns = ["carat","cut0","cut1","cut2","cut3","cut4",\
 											 "color0","color1","color2","color3","color4","color5","color6",\
 											 "clarity0","clarity1","clarity2","clarity3","clarity4","clarity5","clarity6","clarity7",\
 											 "x","y","z","depth","table","price"] # One-hot mode
 	diamonds_df = pd.DataFrame(diamonds_table,columns=new_columns)
-	#diamonds_df["bias"] = 1.0
-	#diamonds_df["volume"] = diamonds_df["x"]*diamonds_df["y"]*diamonds_df["z"]
-	#diamonds_df["volume_2"] = diamonds_df["volume"]**2
-	#diamonds_df["volume_3"] = diamonds_df["volume"]**3
-	#diamonds_df["carat_2"] = diamonds_df["carat"]**2
-	#diamonds_df["carat_3"] = diamonds_df["carat"]**3
-	#diamonds_df["exp_carat"] = np.exp(1.58*diamonds_df["carat"])
-	#diamonds_df.drop(columns=["carat"])
-	#diamonds_df.drop(columns=["x","y","z"])
-
+	
 	# Normalize columns
 	diamonds_array = diamonds_df.values
-	diamonds_scaled = preprocessing.StandardScaler().fit_transform(diamonds_array)
-	#diamonds_scaled = preprocessing.MinMaxScaler().fit_transform(diamonds_array) # tirar min e max
+	diamonds_scaled = preprocessing.StandardScaler().fit_transform(diamonds_array) # Tirar min e max
 	diamonds_df = pd.DataFrame(diamonds_scaled,columns=list(diamonds_df))
 
-	# ["carat","cut","color","clarity","x","y","z","depth","table"]
-	#diamonds_X = diamonds_df[["carat","cut","color","clarity","x","y","z"]].values
 	#diamonds_X = diamonds_df.loc[:,diamonds_df.columns != "price"].values # One-hot mode
 	diamonds_X = diamonds_df[new_columns[:-3]].values
 	diamonds_Y = diamonds_df["price"].values
 
-	# Nova feature: e^(1.58*carat)
-	#for x in diamonds_X:
-	#	x[0] = np.exp(1.58*x[0])
-
+	diamonds_X = np.insert(diamonds_X,0,1,1)
 	return diamonds_X, diamonds_Y
-
-#sk_regressor = linear_model.SGDRegressor()
-#sk_regressor.fit(diamonds_X,diamonds_Y)
-#print(sk_regressor.score(diamonds_X,diamonds_Y))
-
-# Retornar np arrays X e Y
 
 #for column in diamonds_df:
 #	print(column+": %f"%diamonds_df[column].corr(diamonds_df["price"]))
+
+## Create artificial data
+#train_X = np.random.uniform(-1.0,1.0,size=(100,10))
+#train_X = np.insert(train_X,0,1,1)
+#theta = np.random.normal(1.0,5.0,size=train_X.shape[1])
+#train_Y = np.dot(train_X,theta) + np.random.normal(0.0,0.1,size=100)
+#plt.plot(train_X,train_Y,'ro')
+#plt.show()
 

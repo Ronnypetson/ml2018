@@ -7,6 +7,10 @@ class modelo_linear:
 		self.train_iter = train_iter
 		self.mini_batch_len = mini_batch_len
 
+	# Compute mean squared loss
+	def loss(Y,Y_):
+		return np.mean((Y-Y_)**2)
+
 	# Fit parameters theta by mini-batch gradient descent
 	def fit(self,X_train,Y_train):
 		# Create column with 1
@@ -34,8 +38,4 @@ class modelo_linear:
 	def predict(self,X_test):
 		#X_test = np.insert(X_test,0,1,1)
 		return np.dot(X_test,self.theta)
-
-	# Compute mean squared loss
-	def loss(Y,Y_):
-		return np.mean((Y-Y_)**2)
 
