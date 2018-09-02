@@ -18,7 +18,7 @@ for dic in [cuts,colors,clarities]:
 		dic[x] = new_x
 
 # Le o arquivo e retorna os dados divididos em X e Y
-def getXY(fl_path='diamonds-dataset/diamonds-train.csv'):
+def getXY(fl_path='diamonds-dataset/diamonds-train.csv',train_norm=False,col_means=None,col_var=None):
 	# Loading the table
 	diamonds_table = np.genfromtxt(fl_path,dtype=None,delimiter=',',skip_header=1)
 	diamonds_table = [ list(t) for t in diamonds_table ]
@@ -40,19 +40,24 @@ def getXY(fl_path='diamonds-dataset/diamonds-train.csv'):
 	
 	# Normalize columns
 	diamonds_array = diamonds_df.values
-	diamonds_scaled = preprocessing.StandardScaler().fit_transform(diamonds_array) # Tirar min e max
-	diamonds_df = pd.DataFrame(diamonds_scaled,columns=list(diamonds_df))
-
-	#diamonds_X = diamonds_df.loc[:,diamonds_df.columns != "price"].values # One-hot mode
-	diamonds_X = diamonds_df[new_columns[:-3]].values
-	diamonds_Y = diamonds_df["price"].values
-
-	diamonds_X = np.insert(diamonds_X,0,1,1)
-	return diamonds_X, diamonds_Y
+	if train_norm:
+		std_scaler = preprocessing.StandardScaler()
+		diamonds_scaled = std_scaler.fit_transform(diamonds_array) # Tirar min e max
+		diamonds_df = pd.DataFrame(diamonds_scaled,columns=list(diamonds_df))
+		diamonds_X = diamonds_df[new_columns[:-3]].values
+		diamonds_Y = diamonds_df["price"].values
+		diamonds_X = np.insert(diamonds_X,0,1,1)
+		return diamonds_X, diamonds_Y, std_scaler.mean_, std_scaler.var_
+	else:
+		diamonds_scaled = np.array([(x-col_means)/np.sqrt(col_var) for x in diamonds_array])
+		diamonds_df = pd.DataFrame(diamonds_scaled,columns=list(diamonds_df))
+		diamonds_X = diamonds_df[new_columns[:-3]].values
+		diamonds_Y = diamonds_df["price"].values
+		diamonds_X = np.insert(diamonds_X,0,1,1)
+		return diamonds_X, diamonds_Y
 
 #for column in diamonds_df:
 #	print(column+": %f"%diamonds_df[column].corr(diamonds_df["price"]))
-
 ## Create artificial data
 #train_X = np.random.uniform(-1.0,1.0,size=(100,10))
 #train_X = np.insert(train_X,0,1,1)
@@ -60,4 +65,5 @@ def getXY(fl_path='diamonds-dataset/diamonds-train.csv'):
 #train_Y = np.dot(train_X,theta) + np.random.normal(0.0,0.1,size=100)
 #plt.plot(train_X,train_Y,'ro')
 #plt.show()
+#diamonds_X = diamonds_df.loc[:,diamonds_df.columns != "price"].values # One-hot mode
 
