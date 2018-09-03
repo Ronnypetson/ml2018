@@ -15,6 +15,8 @@ def descida_gradiente(train_X,train_Y,valid_X,valid_Y,learning_rate=0.001):
 	## (2) Descida de gradiente
 	mod_l = modelo_linear()
 	mse = mod_l.fit(train_X,train_Y)
+	plt.xlabel('iterations')
+	plt.ylabel('MSE')
 	plt.plot(mse)
 	plt.show()
 	Y_ = mod_l.predict(valid_X)
@@ -41,7 +43,7 @@ num_samples = train_X.shape[0]
 num_features = train_X.shape[1]
 k = 5
 block_len = int(num_samples/k)
-methods = {"sgd_sklearn":sgd_sklearn,"eq_normal":eq_normal} # ,"descida_gradiente":descida_gradiente
+methods = {"sgd_sklearn":sgd_sklearn,"eq_normal":eq_normal,"descida_gradiente":descida_gradiente}
 for m in methods:
 	print("Evaluating method "+m)
 	r2_scores = np.zeros(k)

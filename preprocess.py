@@ -20,7 +20,7 @@ for dic in [cuts,colors,clarities]:
 # Le o arquivo e retorna os dados divididos em X e Y
 def getXY(fl_path='diamonds-dataset/diamonds-train.csv',train_norm=False,col_means=None,col_var=None):
 	# Loading the table
-	diamonds_table = np.genfromtxt(fl_path,dtype=None,delimiter=',',skip_header=1)
+	diamonds_table = np.genfromtxt(fl_path,dtype=None,delimiter=',',skip_header=1,encoding='ascii')
 	diamonds_table = [ list(t) for t in diamonds_table ]
 
 	# Replacing strings by one-hot encoding
