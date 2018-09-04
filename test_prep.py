@@ -5,15 +5,15 @@ from sklearn import linear_model
 from sklearn.metrics import r2_score
 from matplotlib import pyplot as plt
 
-def sgd_sklearn(train_X,train_Y,valid_X,valid_Y,learning_rate=0.001):
+def sgd_sklearn(train_X,train_Y,valid_X,valid_Y,learning_rate=0.1,max_iter=1000):
 	## (1) SGD regressor (sklearn)
-	sk_regressor = linear_model.SGDRegressor()
+	sk_regressor = linear_model.SGDRegressor(max_iter=max_iter,eta0=learning_rate)
 	sk_regressor.fit(train_X,train_Y)
-	return sk_regressor.score(valid_X,valid_Y), sk_regressor.coef_
+	return r2_score(valid_Y,sk_regressor.predict(valid_X)), sk_regressor.coef_ # sk_regressor.score(valid_X,valid_Y)
 
-def descida_gradiente(train_X,train_Y,valid_X,valid_Y,learning_rate=0.001):
+def descida_gradiente(train_X,train_Y,valid_X,valid_Y,learning_rate=0.1):
 	## (2) Descida de gradiente
-	mod_l = modelo_linear()
+	mod_l = modelo_linear(learning_rate=learning_rate)
 	mse = mod_l.fit(train_X,train_Y)
 	plt.xlabel('iterations')
 	plt.ylabel('MSE')
@@ -43,23 +43,19 @@ num_samples = train_X.shape[0]
 num_features = train_X.shape[1]
 k = 5
 block_len = int(num_samples/k)
-methods = {"sgd_sklearn":sgd_sklearn,"eq_normal":eq_normal,"descida_gradiente":descida_gradiente}
+methods = {"eq_normal":eq_normal,"descida_gradiente":descida_gradiente,"sgd_sklearn":sgd_sklearn}
 for m in methods:
 	print("Evaluating method "+m)
 	r2_scores = np.zeros(k)
 	params = np.zeros((k,num_features))
-	if m == "eq_normal":
-		r2_score_,params_ = eq_normal(train_X,train_Y,test_X,test_Y)
-		print("Test R2 score: %f"%r2_score_)
-	else:
-		for i in range(k):
-			_valid_X = train_X[i*block_len:(i+1)*block_len]
-			_train_X = np.concatenate((train_X[0:i*block_len],train_X[(i+1)*block_len:]),axis=0)
-			_valid_Y = train_Y[i*block_len:(i+1)*block_len]
-			_train_Y = np.concatenate((train_Y[0:i*block_len],train_Y[(i+1)*block_len:]),axis=0)
-			#print(_valid_X.shape, _valid_Y.shape)
-			r2_scores[i],params[i] = methods[m](_train_X,_train_Y,_valid_X,_valid_Y)
-		print("Validation mean R2 score: %f"%np.mean(r2_scores))
-		chosen_params = params[np.argmax(r2_scores)]
-		print("Test R2 score: %f"%r2_score(test_Y,np.dot(test_X,chosen_params)))
+	for i in range(k):
+		_valid_X = train_X[i*block_len:(i+1)*block_len]
+		_train_X = np.concatenate((train_X[0:i*block_len],train_X[(i+1)*block_len:]),axis=0)
+		_valid_Y = train_Y[i*block_len:(i+1)*block_len]
+		_train_Y = np.concatenate((train_Y[0:i*block_len],train_Y[(i+1)*block_len:]),axis=0)
+		r2_scores[i],params[i] = methods[m](_train_X,_train_Y,_valid_X,_valid_Y)
+	print(r2_scores)
+	print("Validation mean R2 score: %f"%np.mean(r2_scores))
+	chosen_params = params[np.argmax(r2_scores)]
+	print("Test R2 score: %f"%r2_score(test_Y,np.dot(test_X,chosen_params)))
 

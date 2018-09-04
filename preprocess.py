@@ -1,6 +1,8 @@
 import numpy as np
 import pandas as pd
 from sklearn import preprocessing
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 # Attributes of the "diamonds" table in the original order
 # carat,cut,color,clarity,x,y,z,depth,table,price
@@ -36,22 +38,30 @@ def getXY(fl_path='diamonds-dataset/diamonds-train.csv',train_norm=False,col_mea
 											 "color0","color1","color2","color3","color4","color5","color6",\
 											 "clarity0","clarity1","clarity2","clarity3","clarity4","clarity5","clarity6","clarity7",\
 											 "x","y","z","depth","table","price"] # One-hot mode
+	#new_columns = ["carat","cut","color","clarity","x","y","z","depth","table","price"]
 	diamonds_df = pd.DataFrame(diamonds_table,columns=new_columns)
+	#diamonds_df["carat_2"] = diamonds_df["carat"]**1.5
+	#diamonds_df["carat_3"] = diamonds_df["carat"]**3
+	#diamonds_df["carat_exp"] = np.exp(0.5*diamonds_df["carat"])
+	#sns.heatmap(data=diamonds_df[new_columns].corr(),annot=True,cbar=True)
+	#plt.show()
+	new_columns = [col for col in new_columns if col not in ["depth","table","price"]]
 	
 	# Normalize columns
 	diamonds_array = diamonds_df.values
+	np.random.shuffle(diamonds_array)
 	if train_norm:
 		std_scaler = preprocessing.StandardScaler()
-		diamonds_scaled = std_scaler.fit_transform(diamonds_array) # Tirar min e max
+		diamonds_scaled = std_scaler.fit_transform(diamonds_array)
 		diamonds_df = pd.DataFrame(diamonds_scaled,columns=list(diamonds_df))
-		diamonds_X = diamonds_df[new_columns[:-3]].values
+		diamonds_X = diamonds_df[new_columns].values
 		diamonds_Y = diamonds_df["price"].values
 		diamonds_X = np.insert(diamonds_X,0,1,1)
 		return diamonds_X, diamonds_Y, std_scaler.mean_, std_scaler.var_
 	else:
 		diamonds_scaled = np.array([(x-col_means)/np.sqrt(col_var) for x in diamonds_array])
 		diamonds_df = pd.DataFrame(diamonds_scaled,columns=list(diamonds_df))
-		diamonds_X = diamonds_df[new_columns[:-3]].values
+		diamonds_X = diamonds_df[new_columns].values
 		diamonds_Y = diamonds_df["price"].values
 		diamonds_X = np.insert(diamonds_X,0,1,1)
 		return diamonds_X, diamonds_Y

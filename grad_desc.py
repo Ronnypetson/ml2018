@@ -2,7 +2,7 @@ import numpy as np
 
 class modelo_linear:
 	# Initializer
-	def __init__(self,learning_rate=0.001,train_iter=32000,mini_batch_len=100):
+	def __init__(self,learning_rate=0.1,train_iter=1000,mini_batch_len=100):
 		self.learning_rate = learning_rate
 		self.train_iter = train_iter
 		self.mini_batch_len = mini_batch_len
